@@ -3,12 +3,14 @@ import { useState } from "react";
 import React from "react";
 import { LinearGradient } from "expo-linear-gradient";
 import Checkbox from "expo-checkbox";
+import Confirm from "./Confirm";
 
 export default function Start() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [isChecked, setChecked] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
 
   function validateName() {
     const nameCharecter = /^[a-zA-Z]+$/;
@@ -34,7 +36,7 @@ export default function Start() {
   }
   function register() {
     if (validateName() && validateEmail() && validatePhone() && isChecked) {
-      alert("Registration successful");
+      setModalVisible(true);
     } else {
       alert("Registration failed");
     }
@@ -99,6 +101,7 @@ export default function Start() {
           />
         </View>
       </View>
+      <Confirm modalVisible={modalVisible} />
     </View>
   );
 }
@@ -164,6 +167,7 @@ const styles = StyleSheet.create({
   checkbox: {
     flexDirection: "row",
     marginTop: 50,
+    marginBottom: 20,
   },
   button: {
     justifyContent: "space-evenly",
