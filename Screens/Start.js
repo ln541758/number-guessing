@@ -5,9 +5,23 @@ import { LinearGradient } from "expo-linear-gradient";
 
 export default function Start() {
   const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
   function validateName() {
     const nameCharecter = /^[a-zA-Z]+$/;
     return name.length >= 2 && nameCharecter.test(name);
+  }
+  function validateEmail() {
+    const emailCharecter = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{1,}$/;
+    return emailCharecter.test(email);
+  }
+  function validatePhone() {
+    const phoneNumber = /^\d{10}$/; 
+    if (!phoneNumber.test(phone) || phone.length != 10) {
+      return false;
+    }
+    const lastDigit = phone.charAt(phone.length - 1);
+    return !(lastDigit === "0" || lastDigit === "1");
   }
 
   return (
@@ -31,28 +45,28 @@ export default function Start() {
           )}
         </View>
         <View>
-          <Text style={styles.label}>Name</Text>
+          <Text style={styles.label}>Email address</Text>
           <TextInput
             style={styles.input}
-            value={name}
-            onChangeText={setName}
-            placeholder="Enter your name"
+            value={email}
+            onChangeText={setEmail}
+            placeholder="Enter your email"
           />
-          {!validateName() && name.length > 0 && (
-            <Text style={styles.error}>Please enter a valid name</Text>
+          {!validateEmail() && email.length > 0 && (
+            <Text style={styles.error}>Please enter a valid email</Text>
           )}
         </View>
         <View>
-        <Text style={styles.label}>Name</Text>
-        <TextInput
-          style={styles.input}
-          value={name}
-          onChangeText={setName}
-          placeholder="Enter your name"
-        />
-        {!validateName() && name.length > 0 && (
-          <Text style={styles.error}>Please enter a valid name</Text>
-        )}
+          <Text style={styles.label}>Phone Number:</Text>
+          <TextInput
+            style={styles.input}
+            value={phone}
+            onChangeText={setPhone}
+            placeholder="Enter your phone number"
+          />
+          {!validatePhone() && phone.length > 0 && (
+            <Text style={styles.error}>Please enter a valid phone</Text>
+          )}
         </View>
       </View>
     </View>
