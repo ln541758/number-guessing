@@ -2,11 +2,14 @@ import { StyleSheet, Text, TextInput, View } from "react-native";
 import { useState } from "react";
 import React from "react";
 import { LinearGradient } from "expo-linear-gradient";
+import Checkbox from 'expo-checkbox';
 
 export default function Start() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
+  const [isChecked, setChecked] = useState(false);
+
   function validateName() {
     const nameCharecter = /^[a-zA-Z]+$/;
     return name.length >= 2 && nameCharecter.test(name);
@@ -68,6 +71,10 @@ export default function Start() {
             <Text style={styles.error}>Please enter a valid phone</Text>
           )}
         </View>
+        <View style={styles.checkbox}>
+        <Checkbox value={isChecked} onValueChange={setChecked} />
+        <Text style={styles.checkText}>I am not a robot</Text>
+        </View>
       </View>
     </View>
   );
@@ -126,6 +133,15 @@ const styles = StyleSheet.create({
     fontSize: 20,
     color: "gray",
   },
+  checkText: {
+    color: "rebeccapurple",
+    fontSize: 15,
+    marginLeft: 10,
+  },
+  checkbox:{
+    flexDirection: 'row',
+    marginTop: 50,
+  },
   button: {},
-  checkbox: {},
+
 });
