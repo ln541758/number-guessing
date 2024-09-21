@@ -1,8 +1,8 @@
-import { StyleSheet, Text, TextInput, View } from "react-native";
+import { StyleSheet, Button, Text, TextInput, View } from "react-native";
 import { useState } from "react";
 import React from "react";
 import { LinearGradient } from "expo-linear-gradient";
-import Checkbox from 'expo-checkbox';
+import Checkbox from "expo-checkbox";
 
 export default function Start() {
   const [name, setName] = useState("");
@@ -19,12 +19,25 @@ export default function Start() {
     return emailCharecter.test(email);
   }
   function validatePhone() {
-    const phoneNumber = /^\d{10}$/; 
+    const phoneNumber = /^\d{10}$/;
     if (!phoneNumber.test(phone) || phone.length != 10) {
       return false;
     }
     const lastDigit = phone.charAt(phone.length - 1);
     return !(lastDigit === "0" || lastDigit === "1");
+  }
+  function reset() {
+    setName("");
+    setEmail("");
+    setPhone("");
+    setChecked(false);
+  }
+  function register() {
+    if (validateName() && validateEmail() && validatePhone() && isChecked) {
+      alert("Registration successful");
+    } else {
+      alert("Registration failed");
+    }
   }
 
   return (
@@ -72,8 +85,18 @@ export default function Start() {
           )}
         </View>
         <View style={styles.checkbox}>
-        <Checkbox value={isChecked} onValueChange={setChecked} />
-        <Text style={styles.checkText}>I am not a robot</Text>
+          <Checkbox value={isChecked} onValueChange={setChecked} />
+          <Text style={styles.checkText}>I am not a robot</Text>
+        </View>
+        <View style={styles.button}>
+          <Button title="Reset" onPress={reset} color="mediumvioletred"/>
+          <Button
+            style={styles.register}
+            title="Register"
+            onPress={register}
+            color="blue"
+            disabled={!isChecked}
+          />
         </View>
       </View>
     </View>
@@ -118,6 +141,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     color: "rebeccapurple",
     marginBottom: 10,
+    marginTop: 30,
   },
   input: {
     fontWeight: "bold",
@@ -129,8 +153,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   error: {
-    marginBottom: 40,
-    fontSize: 20,
+    fontSize: 15,
     color: "gray",
   },
   checkText: {
@@ -138,10 +161,12 @@ const styles = StyleSheet.create({
     fontSize: 15,
     marginLeft: 10,
   },
-  checkbox:{
-    flexDirection: 'row',
+  checkbox: {
+    flexDirection: "row",
     marginTop: 50,
   },
-  button: {},
-
+  button: {
+    justifyContent: "space-evenly",
+    flexDirection: "row",
+  },
 });
