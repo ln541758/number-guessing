@@ -5,11 +5,11 @@ import { LinearGradient } from "expo-linear-gradient";
 export default function Confirm({ modalVisible }) {
   return (
     <Modal transparent={true} visible={modalVisible} animationType="slide">
-      <LinearGradient
-        colors={["lightblue", "mediumpurple"]}
-        style={styles.background}
-      />
-      <View style={styles.modalBackground}>
+      <View style={styles.container}>
+        <LinearGradient
+          colors={["rgba(173, 216, 230, 0.75)", "rgba(147, 112, 219, 0.75)"]}
+          style={styles.modalBackground}
+        />
         <View style={styles.card}>
           <Text>Confirm</Text>
         </View>
@@ -19,13 +19,12 @@ export default function Confirm({ modalVisible }) {
 }
 
 const styles = StyleSheet.create({
-  modalBackground: {
+  container: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "rgba(173, 216, 230, 0.7)",
   },
-  background: {
+  modalBackground: {
     position: "absolute",
     height: "100%",
     width: "100%",
