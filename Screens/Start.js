@@ -1,6 +1,7 @@
 import { StyleSheet, Text, TextInput, View } from "react-native";
 import { useState } from "react";
 import React from "react";
+import { LinearGradient } from "expo-linear-gradient";
 
 export default function Start() {
   const [name, setName] = useState("");
@@ -10,26 +11,107 @@ export default function Start() {
   }
 
   return (
-    <View style={styles.card}>
-      <Text style={styles.text}>Name</Text>
-      <TextInput
-        style={styles.input}
-        value={name}
-        onChangeText={setName}
-        placeholder="Enter your name"
+    <View style={styles.container}>
+      <LinearGradient
+        colors={["lightblue", "mediumpurple"]}
+        style={styles.background}
       />
-      {!validateName() && name.length > 0 && (
-        <Text style={styles.error}>Please enter a valid name</Text>
-      )}
+      <Text style={styles.header}>Welcome</Text>
+      <View style={styles.card}>
+        <View>
+          <Text style={styles.label}>Name</Text>
+          <TextInput
+            style={styles.input}
+            value={name}
+            onChangeText={setName}
+            placeholder="Enter your name"
+          />
+          {!validateName() && name.length > 0 && (
+            <Text style={styles.error}>Please enter a valid name</Text>
+          )}
+        </View>
+        <View>
+          <Text style={styles.label}>Name</Text>
+          <TextInput
+            style={styles.input}
+            value={name}
+            onChangeText={setName}
+            placeholder="Enter your name"
+          />
+          {!validateName() && name.length > 0 && (
+            <Text style={styles.error}>Please enter a valid name</Text>
+          )}
+        </View>
+        <View>
+        <Text style={styles.label}>Name</Text>
+        <TextInput
+          style={styles.input}
+          value={name}
+          onChangeText={setName}
+          placeholder="Enter your name"
+        />
+        {!validateName() && name.length > 0 && (
+          <Text style={styles.error}>Please enter a valid name</Text>
+        )}
+        </View>
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  card: {},
-  input: {},
-  text: {},
+  container: {
+    flex: 1,
+    justifyContent: "flex-start",
+    alignItems: "center",
+  },
+  background: {
+    position: "absolute",
+    height: "100%",
+    width: "100%",
+  },
+  header: {
+    marginTop: 80,
+    fontSize: 25,
+    fontWeight: "bold",
+    alignSelf: "center",
+    color: "blue",
+  },
+  card: {
+    backgroundColor: "darkgray",
+    borderRadius: 10,
+    height: 500,
+    width: 300,
+    padding: 20,
+    justifyContent: "center",
+    marginTop: 80,
+    // Android
+    elevation: 10,
+    // iOS
+    shadowColor: "#000",
+    shadowOffset: { width: 1, height: 2 },
+    shadowOpacity: 0.4,
+    shadowRadius: 8,
+  },
+  label: {
+    fontSize: 20,
+    color: "rebeccapurple",
+    marginBottom: 10,
+  },
+  input: {
+    fontWeight: "bold",
+    fontSize: 15,
+    color: "rebeccapurple",
+    borderBottomWidth: 2,
+    borderBottomColor: "rebeccapurple",
+    paddingBottom: 10,
+    textAlign: "center",
+  },
+  error: {
+    marginBottom: 40,
+    fontSize: 20,
+    color: "gray",
+  },
   button: {},
-  error: {},
   checkbox: {},
 });
