@@ -2,7 +2,7 @@ import { StyleSheet, Text, Modal, View } from "react-native";
 import React from "react";
 import { LinearGradient } from "expo-linear-gradient";
 
-export default function Confirm({ modalVisible }) {
+export default function Confirm({ modalVisible, name, email, phone }) {
   return (
     <Modal transparent={true} visible={modalVisible} animationType="slide">
       <View style={styles.container}>
@@ -11,7 +11,14 @@ export default function Confirm({ modalVisible }) {
           style={styles.modalBackground}
         />
         <View style={styles.card}>
-          <Text>Confirm</Text>
+          <Text style={styles.text}>
+            Hello {name}
+            {"\n"}Here is the information you entered:{"\n"}
+            {email}
+            {"\n"}
+            {phone}
+            {"\n"}If it is not correct, please go back and edit them.
+          </Text>
         </View>
       </View>
     </Modal>
@@ -33,7 +40,7 @@ const styles = StyleSheet.create({
     backgroundColor: "darkgray",
     borderRadius: 10,
     height: 300,
-    width: 300,
+    width: 370,
     padding: 20,
     justifyContent: "center",
     // Android
@@ -43,5 +50,9 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 1, height: 2 },
     shadowOpacity: 0.4,
     shadowRadius: 8,
+  },
+  text: {
+    fontSize: 20,
+    color: "rebeccapurple",
   },
 });

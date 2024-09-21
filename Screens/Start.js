@@ -101,7 +101,7 @@ export default function Start() {
           />
         </View>
       </View>
-      <Confirm modalVisible={modalVisible} />
+      <Confirm modalVisible={modalVisible} name={name} email={email} phone={phone}/>
     </View>
   );
 }
