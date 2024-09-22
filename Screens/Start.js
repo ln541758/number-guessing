@@ -34,7 +34,7 @@ export default function Start({ user, handleRegister }) {
   }
   function register() {
     if (validateName() && validateEmail() && validatePhone() && isChecked) {
-      handleRegister(name, email, phone);
+      handleRegister(name, email, phone, isChecked);
     } else {
       alert("Registration failed");
     }

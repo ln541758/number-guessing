@@ -9,8 +9,9 @@ export default function App() {
   const [user, setUser] = useState({ name: "", email: "", phone: "" });
   const [confirmVisible, setConfirmVisible] = useState(false);
   const [gameVisible, setGameVisible] = useState(false);
-  function handleRegister(name, email, phone) {
-    setUser({ name: name, email: email, phone: phone });
+  const lastDigit = user.phone.charAt(user.phone.length - 1);
+  function handleRegister(name, email, phone, isChecked) {
+    setUser({ name: name, email: email, phone: phone, isChecked: isChecked });
     setConfirmVisible(true);
   }
   function handleCancel() {
@@ -20,20 +21,35 @@ export default function App() {
     setConfirmVisible(false);
     setGameVisible(true);
   }
+  function handleRestart() {
+    setUser({ name: "", email: "", phone: "" });
+    setConfirmVisible(false);
+    setGameVisible(false);
+  }
 
   return (
     <View style={styles.container}>
       <StatusBar style="auto" />
-      <Start user={user} handleRegister={handleRegister} />
-      <Confirm
-        confirmVisible={confirmVisible}
-        name={user.name}
-        email={user.email}
-        phone={user.phone}
-        handleCancel={handleCancel}
-        handleConfirm={handleConfirm}
-      />
-      <Game gameVisible={gameVisible} />
+      {!confirmVisible && !gameVisible && (
+        <Start user={user} handleRegister={handleRegister} />
+      )}
+      {confirmVisible && (
+        <Confirm
+          confirmVisible={confirmVisible}
+          name={user.name}
+          email={user.email}
+          phone={user.phone}
+          handleCancel={handleCancel}
+          handleConfirm={handleConfirm}
+        />
+      )}
+      {gameVisible && (
+        <Game
+          gameVisible={gameVisible}
+          lastDigit={lastDigit}
+          handleRestart={handleRestart}
+        />
+      )}
     </View>
   );
 }
