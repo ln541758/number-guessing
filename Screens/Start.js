@@ -1,16 +1,14 @@
-import { StyleSheet, Button, Text, TextInput, View } from "react-native";
+import { StyleSheet, Button, Text, TextInput, View, Modal } from "react-native";
 import { useState } from "react";
 import React from "react";
 import { LinearGradient } from "expo-linear-gradient";
 import Checkbox from "expo-checkbox";
-import Confirm from "./Confirm";
 
-export default function Start() {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
+export default function Start({ user, handleRegister }) {
+  const [name, setName] = useState(user.name || "");
+  const [email, setEmail] = useState(user.email || "");
+  const [phone, setPhone] = useState(user.phone || "");
   const [isChecked, setChecked] = useState(false);
-  const [modalVisible, setModalVisible] = useState(false);
 
   function validateName() {
     const nameCharecter = /^[a-zA-Z]+$/;
@@ -36,7 +34,7 @@ export default function Start() {
   }
   function register() {
     if (validateName() && validateEmail() && validatePhone() && isChecked) {
-      setModalVisible(true);
+      handleRegister(name, email, phone);
     } else {
       alert("Registration failed");
     }
@@ -91,9 +89,8 @@ export default function Start() {
           <Text style={styles.checkText}>I am not a robot</Text>
         </View>
         <View style={styles.button}>
-          <Button title="Reset" onPress={reset} color="mediumvioletred"/>
+          <Button title="Reset" onPress={reset} color="mediumvioletred" />
           <Button
-            style={styles.register}
             title="Register"
             onPress={register}
             color="blue"
@@ -101,7 +98,6 @@ export default function Start() {
           />
         </View>
       </View>
-      <Confirm modalVisible={modalVisible} name={name} email={email} phone={phone}/>
     </View>
   );
 }

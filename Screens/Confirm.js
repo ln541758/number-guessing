@@ -1,10 +1,11 @@
-import { StyleSheet, Text, Modal, View } from "react-native";
+import { StyleSheet, Text, Modal, View, Button } from "react-native";
 import React from "react";
 import { LinearGradient } from "expo-linear-gradient";
 
-export default function Confirm({ modalVisible, name, email, phone }) {
+export default function Confirm({ confirmVisible, name, email, phone, handleCancel, handleConfirm }) {
+
   return (
-    <Modal transparent={true} visible={modalVisible} animationType="slide">
+    <Modal transparent={true} visible={confirmVisible} animationType="slide">
       <View style={styles.container}>
         <LinearGradient
           colors={["rgba(173, 216, 230, 0.75)", "rgba(147, 112, 219, 0.75)"]}
@@ -19,6 +20,14 @@ export default function Confirm({ modalVisible, name, email, phone }) {
             {phone}
             {"\n"}If it is not correct, please go back and edit them.
           </Text>
+          <View style={styles.button}>
+            <Button title="Go back" onPress={handleCancel} color="mediumvioletred" />
+            <Button
+              title="Continue"
+              onPress={handleConfirm}
+              color="blue"
+            />
+          </View>
         </View>
       </View>
     </Modal>
@@ -40,9 +49,9 @@ const styles = StyleSheet.create({
     backgroundColor: "darkgray",
     borderRadius: 10,
     height: 300,
-    width: 370,
+    width: 360,
     padding: 20,
-    justifyContent: "center",
+    justifyContent: "space-evenly",
     // Android
     elevation: 10,
     // iOS
@@ -54,5 +63,9 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 20,
     color: "rebeccapurple",
+    paddingBottom: 10, },
+  button: {
+    justifyContent: "space-evenly",
+    flexDirection: "row",    
   },
 });
