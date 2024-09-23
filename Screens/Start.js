@@ -8,7 +8,7 @@ export default function Start({ user, handleRegister }) {
   const [name, setName] = useState(user.name || "");
   const [email, setEmail] = useState(user.email || "");
   const [phone, setPhone] = useState(user.phone || "");
-  const [isChecked, setChecked] = useState(false);
+  const [isChecked, setChecked] = useState(user.isChecked || false);
 
   function validateName() {
     const nameCharecter = /^[a-zA-Z]+$/;

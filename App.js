@@ -6,7 +6,7 @@ import Game from "./Screens/Game";
 import { useState } from "react";
 
 export default function App() {
-  const [user, setUser] = useState({ name: "", email: "", phone: "" });
+  const [user, setUser] = useState({ name: "", email: "", phone: "", isChecked: false });
   const [confirmVisible, setConfirmVisible] = useState(false);
   const [gameVisible, setGameVisible] = useState(false);
   const lastDigit = user.phone.charAt(user.phone.length - 1);
@@ -22,7 +22,7 @@ export default function App() {
     setGameVisible(true);
   }
   function handleRestart() {
-    setUser({ name: "", email: "", phone: "" });
+    setUser({ name: "", email: "", phone: "", isChecked: false });
     setConfirmVisible(false);
     setGameVisible(false);
   }
