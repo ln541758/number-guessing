@@ -6,6 +6,7 @@ import {
   TextInput,
   View,
   Alert,
+  Image,
 } from "react-native";
 import React from "react";
 import { LinearGradient } from "expo-linear-gradient";
@@ -21,25 +22,28 @@ export default function Game({ gameVisible, lastDigit, handleRestart }) {
   const [hint, setHint] = useState("");
   const [isHintUsed, setIsHintUsed] = useState(false);
   const [showSubmitCard, setShowSubmitCard] = useState(false);
-  const [showGuessCard, setShowGuessCard] = useState(false);
-  const maxMultiplier = Math.floor(100 / lastDigit);
-  const multiplier = Math.floor(Math.random() * maxMultiplier) + 1;
-  const answer = lastDigit * multiplier;
+  const [isCorrect, setIsCorrect] = useState(false);
+  const [answer, setAnswer] = useState(generateNewAnswer());
+
+  function generateNewAnswer() {
+    const maxMultiplier = Math.floor(100 / lastDigit);
+    const multiplier = Math.floor(Math.random() * maxMultiplier) + 1;
+    return lastDigit * multiplier;
+  }
 
   function startGame() {
     setGameStarted(true);
     setIsTimerActive(true);
-    setShowGuessCard(true);
   }
 
-    function useHint() {
-      if (answer >= 51 && answer <= 100) {
-        setHint("The number is between 51 and 100");
-      } else if (answer >= 1 && answer <= 50) {
-        setHint("The number is between 1 and 50");
-      }
-      setIsHintUsed(true);
+  function useHint() {
+    if (answer >= 51 && answer <= 100) {
+      setHint("The number is between 51 and 100");
+    } else if (answer >= 1 && answer <= 50) {
+      setHint("The number is between 1 and 50");
     }
+    setIsHintUsed(true);
+  }
 
   function submitGuess() {
     const value = parseInt(inputValue);
@@ -52,8 +56,13 @@ export default function Game({ gameVisible, lastDigit, handleRestart }) {
     }
     if (guessNumber >= 1) {
       setGuessNumber((prevGuess) => prevGuess - 1);
-      resultText();
       setShowSubmitCard(true);
+    }
+    if (value === answer) {
+      setIsCorrect(true);
+      setResult(`You guessed correct!\nAttempts used: ${guessNumber}`);
+    } else {
+      resultText(value);
     }
   }
 
@@ -63,25 +72,52 @@ export default function Game({ gameVisible, lastDigit, handleRestart }) {
       setResult("You did not guess correct!\nYou should guess higher.");
     } else if (value > answer) {
       setResult("You did not guess correct!\nYou should guess lower.");
-    } else {
-      setResult(`You guessed correct!\nAttempts used: ${guessNumber}`);
     }
   }
 
   function handleTryAgain() {
     setInputValue("");
-    setShowGuessCard(true);
     setShowSubmitCard(false);
   }
 
   function handleGameOver() {}
 
+  function handleNewGame() {
+    setSecondsLeft(60);
+    setIsTimerActive(false);
+    setGuessNumber(4);
+    setInputValue("");
+    setResult("");
+    setHint("");
+    setIsHintUsed(false);
+    setShowSubmitCard(false);
+    setIsCorrect(false);
+    setAnswer(generateNewAnswer());
+  }
+
   function submitCard() {
     return (
       <View style={styles.card}>
         <Text style={styles.text}>{result}</Text>
-        <Button title="Try Again" onPress={handleTryAgain} color="blue" />
-        <Button title="End the game" onPress={handleGameOver} color="blue" />
+        {!isCorrect ? (
+          <View>
+            <Button title="Try Again" onPress={handleTryAgain} color="blue" />
+            <Button
+              title="End the game"
+              onPress={handleGameOver}
+              color="blue"
+            />
+          </View>
+        ) : (
+          <View>
+            <Image
+              style={styles.image}
+              source={{ uri: `https://picsum.photos/id/${answer}/100/100` }}
+              alt={"Random image"}
+            />
+            <Button title="New Game" onPress={handleNewGame} color="blue" />
+          </View>
+        )}
       </View>
     );
   }
@@ -120,8 +156,6 @@ export default function Game({ gameVisible, lastDigit, handleRestart }) {
       </View>
     );
   }
-
-
 
   useEffect(() => {
     let interval = null;
@@ -213,6 +247,12 @@ const styles = StyleSheet.create({
   info: {
     fontSize: 15,
     color: "dimgray",
+    alignSelf: "center",
+  },
+  image: {
+    width: 100,
+    height: 100,
+    marginBottom: 10,
     alignSelf: "center",
   },
 });
