@@ -24,6 +24,8 @@ export default function Game({ gameVisible, lastDigit, handleRestart }) {
   const [showSubmitCard, setShowSubmitCard] = useState(false);
   const [isCorrect, setIsCorrect] = useState(false);
   const [answer, setAnswer] = useState(generateNewAnswer());
+  const [reason, setReason] = useState("");
+  const [isGameOver, setIsGameOver] = useState(false);
 
   function generateNewAnswer() {
     const maxMultiplier = Math.floor(100 / lastDigit);
@@ -53,16 +55,23 @@ export default function Game({ gameVisible, lastDigit, handleRestart }) {
         `Number has to be a multiply of ${lastDigit} and between 1 and 100.`,
         [{ text: "Okay" }]
       );
-    }
-    if (guessNumber >= 1) {
-      setGuessNumber((prevGuess) => prevGuess - 1);
+    } else {
       setShowSubmitCard(true);
     }
     if (value === answer) {
       setIsCorrect(true);
-      setResult(`You guessed correct!\nAttempts used: ${guessNumber}`);
+      setResult(`You guessed correct!\nAttempts used: ${5 - guessNumber}`);
+      return;
     } else {
       resultText(value);
+    }
+
+    if (guessNumber === 1) {
+      setGuessNumber(0);
+      handleReason();
+      handleGameOver();
+    } else {
+      setGuessNumber((prevGuess) => prevGuess - 1);
     }
   }
 
@@ -80,7 +89,17 @@ export default function Game({ gameVisible, lastDigit, handleRestart }) {
     setShowSubmitCard(false);
   }
 
-  function handleGameOver() {}
+  function handleReason() {
+    if (guessNumber === 1) {
+      setReason("You are out of attempts");
+    } else if (secondsLeft === 0) {
+      setReason("You are out of time");
+    }
+  }
+
+  function handleGameOver() {
+    setIsGameOver(true);
+  }
 
   function handleNewGame() {
     setSecondsLeft(60);
@@ -93,6 +112,8 @@ export default function Game({ gameVisible, lastDigit, handleRestart }) {
     setShowSubmitCard(false);
     setIsCorrect(false);
     setAnswer(generateNewAnswer());
+    setReason("");
+    setIsGameOver(false);
   }
 
   function submitCard() {
@@ -159,12 +180,15 @@ export default function Game({ gameVisible, lastDigit, handleRestart }) {
 
   useEffect(() => {
     let interval = null;
-    if (secondsLeft > 0) {
+    if (secondsLeft > 0 && !isGameOver) {
       interval = setInterval(() => {
         setSecondsLeft((prevSeconds) => prevSeconds - 1);
       }, 1000);
-    } else if (secondsLeft === 0 || !isTimerActive) {
+    } else if (secondsLeft === 0 || !isTimerActive || isGameOver) {
       clearInterval(interval);
+      setShowSubmitCard(false);
+      handleReason();
+      handleGameOver();
     }
     return () => clearInterval(interval);
   }, [secondsLeft, isTimerActive]);
@@ -179,7 +203,19 @@ export default function Game({ gameVisible, lastDigit, handleRestart }) {
         <View style={styles.restart}>
           <Button title="Restart" onPress={handleRestart} color="dodgerblue" />
         </View>
-        {showSubmitCard ? submitCard() : guessCard()}
+        {!isGameOver ? (showSubmitCard ? submitCard() : guessCard()) : null}
+        {isGameOver && (
+          <View style={styles.card}>
+            <Text style={styles.text}>The game is over!</Text>
+            <Image
+              style={styles.image}
+              source={require("../assets/sadsmiley.png")}
+              alt={"A sad smiley face"}
+            />
+            <Text style={styles.text}>{reason}</Text>
+            <Button title="New Game" onPress={handleNewGame} color="blue" />
+          </View>
+        )}
       </View>
     </Modal>
   );
