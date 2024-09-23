@@ -20,6 +20,8 @@ export default function Game({ gameVisible, lastDigit, handleRestart }) {
   const [result, setResult] = useState("");
   const [hint, setHint] = useState("");
   const [isHintUsed, setIsHintUsed] = useState(false);
+  const [showSubmitCard, setShowSubmitCard] = useState(false);
+  const [showGuessCard, setShowGuessCard] = useState(false);
   const maxMultiplier = Math.floor(100 / lastDigit);
   const multiplier = Math.floor(Math.random() * maxMultiplier) + 1;
   const answer = lastDigit * multiplier;
@@ -27,35 +29,21 @@ export default function Game({ gameVisible, lastDigit, handleRestart }) {
   function startGame() {
     setGameStarted(true);
     setIsTimerActive(true);
+    setShowGuessCard(true);
   }
 
-  function useHint() {
-    const remain = 4 - guessNumber + 1;
-    const numberOfRanges = Math.pow(2, remain);
-    const rangeSize = 100 / numberOfRanges;
-    for (let i = 0; i < numberOfRanges; i++) {
-      const lowerBound = i * rangeSize + 1;
-      const upperBound = (i + 1) * rangeSize;
-      if (answer >= lowerBound && answer <= upperBound) {
-        setHint(
-          `The number is between ${Math.floor(lowerBound)} and ${Math.floor(
-            upperBound
-          )}.`
-        );
-        break;
+    function useHint() {
+      if (answer >= 51 && answer <= 100) {
+        setHint("The number is between 51 and 100");
+      } else if (answer >= 1 && answer <= 50) {
+        setHint("The number is between 1 and 50");
       }
+      setIsHintUsed(true);
     }
-    setIsHintUsed(true);
-  }
 
   function submitGuess() {
     const value = parseInt(inputValue);
-    if (
-      isNaN(value) ||
-      value < 1 ||
-      value > 100 ||
-      guessNumber % lastDigit !== 0
-    ) {
+    if (isNaN(value) || value < 1 || value > 100 || value % lastDigit !== 0) {
       Alert.alert(
         "Invalid number!",
         `Number has to be a multiply of ${lastDigit} and between 1 and 100.`,
@@ -65,28 +53,76 @@ export default function Game({ gameVisible, lastDigit, handleRestart }) {
     if (guessNumber >= 1) {
       setGuessNumber((prevGuess) => prevGuess - 1);
       resultText();
-      submitCard();
+      setShowSubmitCard(true);
     }
   }
 
   function resultText() {
-    if (inputValue < answer) {
+    const value = parseInt(inputValue);
+    if (value < answer) {
       setResult("You did not guess correct!\nYou should guess higher.");
-    } else if (inputValue > answer) {
+    } else if (value > answer) {
       setResult("You did not guess correct!\nYou should guess lower.");
     } else {
       setResult(`You guessed correct!\nAttempts used: ${guessNumber}`);
     }
   }
 
-  function submitCard() {
-    <View style={styles.start}>
-      <Text style={styles.text}>{result}</Text>
-      <Button title="Try Again" onPress={startGame} color="blue" />
-      <Button title="End the game" onPress={startGame} color="blue" />
-    </View>;
+  function handleTryAgain() {
+    setInputValue("");
+    setShowGuessCard(true);
+    setShowSubmitCard(false);
   }
-  
+
+  function handleGameOver() {}
+
+  function submitCard() {
+    return (
+      <View style={styles.card}>
+        <Text style={styles.text}>{result}</Text>
+        <Button title="Try Again" onPress={handleTryAgain} color="blue" />
+        <Button title="End the game" onPress={handleGameOver} color="blue" />
+      </View>
+    );
+  }
+
+  function guessCard() {
+    return (
+      <View style={styles.card}>
+        <Text style={styles.text}>
+          Guess a number between 1 & 100 that is multiple of {lastDigit}
+        </Text>
+        {!gameStarted ? (
+          <View style={styles.start}>
+            <Button title="Start" onPress={startGame} color="blue" />
+          </View>
+        ) : (
+          <View>
+            <TextInput
+              style={styles.input}
+              value={inputValue}
+              onChangeText={setInputValue}
+            />
+            {isHintUsed && <Text style={styles.hint}>{hint}</Text>}
+            <Text style={styles.info}>Attempts left: {guessNumber}</Text>
+            <Text style={styles.info}>Timer: {secondsLeft}s</Text>
+            <View style={styles.start}>
+              <Button
+                title="Use a Hint"
+                onPress={useHint}
+                color="blue"
+                disabled={isHintUsed}
+              />
+              <Button title="Submit guess" onPress={submitGuess} color="blue" />
+            </View>
+          </View>
+        )}
+      </View>
+    );
+  }
+
+
+
   useEffect(() => {
     let interval = null;
     if (secondsLeft > 0) {
@@ -109,40 +145,7 @@ export default function Game({ gameVisible, lastDigit, handleRestart }) {
         <View style={styles.restart}>
           <Button title="Restart" onPress={handleRestart} color="dodgerblue" />
         </View>
-        <View style={styles.card}>
-          <Text style={styles.text}>
-            Guess a number between 1 & 100 that is multiple of {lastDigit}
-          </Text>
-          {!gameStarted ? (
-            <View style={styles.start}>
-              <Button title="Start" onPress={startGame} color="blue" />
-            </View>
-          ) : (
-            <View>
-              <TextInput
-                style={styles.input}
-                value={inputValue}
-                onChangeText={setInputValue}
-              />
-              {isHintUsed && <Text style={styles.hint}>{hint}</Text>}
-              <Text style={styles.info}>Attempts left: {guessNumber}</Text>
-              <Text style={styles.info}>Timer: {secondsLeft}s</Text>
-              <View style={styles.start}>
-                <Button
-                  title="Use a Hint"
-                  onPress={useHint}
-                  color="blue"
-                  disabled={isHintUsed}
-                />
-                <Button
-                  title="Submit guess"
-                  onPress={submitGuess}
-                  color="blue"
-                />
-              </View>
-            </View>
-          )}
-        </View>
+        {showSubmitCard ? submitCard() : guessCard()}
       </View>
     </Modal>
   );
@@ -177,6 +180,8 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 20,
     color: "rebeccapurple",
+    textAlign: "center",
+    marginBottom: 20,
   },
   hint: {
     fontSize: 15,
