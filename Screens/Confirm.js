@@ -1,17 +1,33 @@
 import { StyleSheet, Text, Modal, View, Button } from "react-native";
 import React from "react";
-import { LinearGradient } from "expo-linear-gradient";
+import { Gradient } from "../Components/Gradient";
+import { Card } from "../Components/Card";
+import { Container } from "../Components/Container";
+import { CustomButton } from "../Components/CustomButton";
+import Colors from "../Components/Colors";
+import TextSize from "../Components/TextSize";
 
-export default function Confirm({ confirmVisible, name, email, phone, handleCancel, handleConfirm }) {
-
+export default function Confirm({
+  confirmVisible,
+  name,
+  email,
+  phone,
+  handleCancel,
+  handleConfirm,
+}) {
   return (
     <Modal transparent={true} visible={confirmVisible} animationType="slide">
-      <View style={styles.container}>
-        <LinearGradient
-          colors={["rgba(173, 216, 230, 0.75)", "rgba(147, 112, 219, 0.75)"]}
-          style={styles.modalBackground}
+      <Container>
+        <Gradient
+          colors={[Colors.lightBlueTransparent, Colors.purpleTransparent]}
         />
-        <View style={styles.card}>
+        <Card
+          style={{
+            height: 300,
+            width: 360,
+            justifyContent: "space-evenly",
+          }}
+        >
           <Text style={styles.text}>
             Hello {name}
             {"\n"}Here is the information you entered:{"\n"}
@@ -20,52 +36,28 @@ export default function Confirm({ confirmVisible, name, email, phone, handleCanc
             {phone}
             {"\n"}If it is not correct, please go back and edit them.
           </Text>
-          <View style={styles.button}>
-            <Button title="Go back" onPress={handleCancel} color="mediumvioletred" />
+          <CustomButton>
+            <Button
+              title="Go back"
+              onPress={handleCancel}
+              color={Colors.mediumvioletred}
+            />
             <Button
               title="Continue"
               onPress={handleConfirm}
-              color="blue"
+              color={Colors.blue}
             />
-          </View>
-        </View>
-      </View>
+          </CustomButton>
+        </Card>
+      </Container>
     </Modal>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  modalBackground: {
-    position: "absolute",
-    height: "100%",
-    width: "100%",
-  },
-  card: {
-    backgroundColor: "darkgray",
-    borderRadius: 10,
-    height: 300,
-    width: 360,
-    padding: 20,
-    justifyContent: "space-evenly",
-    // Android
-    elevation: 10,
-    // iOS
-    shadowColor: "#000",
-    shadowOffset: { width: 1, height: 2 },
-    shadowOpacity: 0.4,
-    shadowRadius: 8,
-  },
   text: {
-    fontSize: 20,
-    color: "rebeccapurple",
-    paddingBottom: 10, },
-  button: {
-    justifyContent: "space-evenly",
-    flexDirection: "row",    
+    fontSize: TextSize.title,
+    color: Colors.rebeccapurple,
+    paddingBottom: 10,
   },
 });

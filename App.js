@@ -1,12 +1,17 @@
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View } from "react-native";
 import Start from "./Screens/Start";
 import Confirm from "./Screens/Confirm";
 import Game from "./Screens/Game";
 import { useState } from "react";
+import { Container } from "./Components/Container";
 
 export default function App() {
-  const [user, setUser] = useState({ name: "", email: "", phone: "", isChecked: false });
+  const [user, setUser] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    isChecked: false,
+  });
   const [confirmVisible, setConfirmVisible] = useState(false);
   const [gameVisible, setGameVisible] = useState(false);
   const lastDigit = user.phone.charAt(user.phone.length - 1);
@@ -28,11 +33,9 @@ export default function App() {
   }
 
   return (
-    <View style={styles.container}>
+    <Container style={(backgroundColor = "#fff")}>
       <StatusBar style="auto" />
-      {!confirmVisible && !gameVisible && (
-        <Start user={user} handleRegister={handleRegister} />
-      )}
+      {!gameVisible && <Start user={user} handleRegister={handleRegister} />}
       {confirmVisible && (
         <Confirm
           confirmVisible={confirmVisible}
@@ -50,15 +53,6 @@ export default function App() {
           handleRestart={handleRestart}
         />
       )}
-    </View>
+    </Container>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-});

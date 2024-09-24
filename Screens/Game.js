@@ -9,13 +9,20 @@ import {
   Image,
 } from "react-native";
 import React from "react";
-import { LinearGradient } from "expo-linear-gradient";
+import { Gradient } from "../Components/Gradient";
 import { useState, useEffect } from "react";
+import { Container } from "../Components/Container";
+import { Card } from "../Components/Card";
+import { SubmitCard } from "../Components/SubmitCard";
+import { GuessCard } from "../Components/GuessCard";
+import { ImageDisplay } from "../Components/ImageDisplay";
+import Colors from "../Components/Colors";
+import TextSize from "../Components/TextSize";
 
 export default function Game({ gameVisible, lastDigit, handleRestart }) {
   const [gameStarted, setGameStarted] = useState(false);
   const [secondsLeft, setSecondsLeft] = useState(60);
-  const [isTimerActive, setIsTimerActive] = useState(false);
+  const [isTimerActive, setIsTimerActive] = useState(true);
   const [guessNumber, setGuessNumber] = useState(4);
   const [inputValue, setInputValue] = useState("");
   const [result, setResult] = useState("");
@@ -55,15 +62,14 @@ export default function Game({ gameVisible, lastDigit, handleRestart }) {
         `Number has to be a multiply of ${lastDigit} and between 1 and 100.`,
         [{ text: "Okay" }]
       );
-    } else {
-      setShowSubmitCard(true);
     }
     if (value === answer) {
+      setIsTimerActive(false);
       setIsCorrect(true);
       setResult(`You guessed correct!\nAttempts used: ${5 - guessNumber}`);
-      return;
     } else {
       resultText(value);
+      setIsCorrect(false);
     }
 
     if (guessNumber === 1) {
@@ -72,6 +78,14 @@ export default function Game({ gameVisible, lastDigit, handleRestart }) {
       handleGameOver();
     } else {
       setGuessNumber((prevGuess) => prevGuess - 1);
+    }
+    if (
+      !isNaN(value) &&
+      value >= 1 &&
+      value <= 100 &&
+      value % lastDigit === 0
+    ) {
+      setShowSubmitCard(true);
     }
   }
 
@@ -99,11 +113,12 @@ export default function Game({ gameVisible, lastDigit, handleRestart }) {
 
   function handleGameOver() {
     setIsGameOver(true);
+    setReason("");
   }
 
   function handleNewGame() {
     setSecondsLeft(60);
-    setIsTimerActive(false);
+    setIsTimerActive(true);
     setGuessNumber(4);
     setInputValue("");
     setResult("");
@@ -118,69 +133,36 @@ export default function Game({ gameVisible, lastDigit, handleRestart }) {
 
   function submitCard() {
     return (
-      <View style={styles.card}>
-        <Text style={styles.text}>{result}</Text>
-        {!isCorrect ? (
-          <View>
-            <Button title="Try Again" onPress={handleTryAgain} color="blue" />
-            <Button
-              title="End the game"
-              onPress={handleGameOver}
-              color="blue"
-            />
-          </View>
-        ) : (
-          <View>
-            <Image
-              style={styles.image}
-              source={{ uri: `https://picsum.photos/id/${answer}/100/100` }}
-              alt={"Random image"}
-            />
-            <Button title="New Game" onPress={handleNewGame} color="blue" />
-          </View>
-        )}
-      </View>
+      <SubmitCard
+        result={result}
+        isCorrect={isCorrect}
+        handleTryAgain={handleTryAgain}
+        handleNewGame={handleNewGame}
+        answer={answer}
+        handleGameOver={handleGameOver}
+      />
     );
   }
 
   function guessCard() {
     return (
-      <View style={styles.card}>
-        <Text style={styles.text}>
-          Guess a number between 1 & 100 that is multiple of {lastDigit}
-        </Text>
-        {!gameStarted ? (
-          <View style={styles.start}>
-            <Button title="Start" onPress={startGame} color="blue" />
-          </View>
-        ) : (
-          <View>
-            <TextInput
-              style={styles.input}
-              value={inputValue}
-              onChangeText={setInputValue}
-            />
-            {isHintUsed && <Text style={styles.hint}>{hint}</Text>}
-            <Text style={styles.info}>Attempts left: {guessNumber}</Text>
-            <Text style={styles.info}>Timer: {secondsLeft}s</Text>
-            <View style={styles.start}>
-              <Button
-                title="Use a Hint"
-                onPress={useHint}
-                color="blue"
-                disabled={isHintUsed}
-              />
-              <Button title="Submit guess" onPress={submitGuess} color="blue" />
-            </View>
-          </View>
-        )}
-      </View>
+      <GuessCard
+        lastDigit={lastDigit}
+        inputValue={inputValue}
+        setInputValue={setInputValue}
+        guessNumber={guessNumber}
+        hint={hint}
+        isHintUsed={isHintUsed}
+        useHint={useHint}
+        submitGuess={submitGuess}
+        secondsLeft={secondsLeft}
+      />
     );
   }
 
   useEffect(() => {
     let interval = null;
-    if (secondsLeft > 0 && !isGameOver) {
+    if (secondsLeft > 0 && !isGameOver && isTimerActive) {
       interval = setInterval(() => {
         setSecondsLeft((prevSeconds) => prevSeconds - 1);
       }, 1000);
@@ -195,68 +177,49 @@ export default function Game({ gameVisible, lastDigit, handleRestart }) {
 
   return (
     <Modal transparent={true} visible={gameVisible} animationType="slide">
-      <View style={styles.container}>
-        <LinearGradient
-          colors={["lightblue", "mediumpurple"]}
-          style={styles.background}
-        />
+      <Container>
+        <Gradient colors={[Colors.lightblue, Colors.mediumpurple]} />
         <View style={styles.restart}>
-          <Button title="Restart" onPress={handleRestart} color="dodgerblue" />
+          <Button
+            title="Restart"
+            onPress={handleRestart}
+            color={Colors.dodgerblue}
+          />
         </View>
         {!isGameOver ? (showSubmitCard ? submitCard() : guessCard()) : null}
-        {isGameOver && (
-          <View style={styles.card}>
+        {isGameOver && isCorrect && submitCard()}
+        {isGameOver && !isCorrect && (
+          <Card
+            style={{
+              minHeight: 150,
+              width: 300,
+              justifyContent: "space-between",
+            }}
+          >
             <Text style={styles.text}>The game is over!</Text>
-            <Image
-              style={styles.image}
+            <ImageDisplay
               source={require("../assets/sadsmiley.png")}
               alt={"A sad smiley face"}
             />
             <Text style={styles.text}>{reason}</Text>
-            <Button title="New Game" onPress={handleNewGame} color="blue" />
-          </View>
+            <Button
+              title="New Game"
+              onPress={handleNewGame}
+              color={Colors.blue}
+            />
+          </Card>
         )}
-      </View>
+      </Container>
     </Modal>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  background: {
-    position: "absolute",
-    height: "100%",
-    width: "100%",
-  },
-  card: {
-    backgroundColor: "darkgray",
-    borderRadius: 10,
-    minHeight: 150,
-    width: 300,
-    padding: 20,
-    justifyContent: "space-between",
-    // Android
-    elevation: 10,
-    // iOS
-    shadowColor: "#000",
-    shadowOffset: { width: 1, height: 2 },
-    shadowOpacity: 0.4,
-    shadowRadius: 8,
-  },
   text: {
-    fontSize: 20,
-    color: "rebeccapurple",
+    fontSize: TextSize.title,
+    color: Colors.rebeccapurple,
     textAlign: "center",
     marginBottom: 20,
-  },
-  hint: {
-    fontSize: 15,
-    textAlign: "center",
-    marginBottom: 10,
   },
   start: {
     alignSelf: "center",
@@ -266,29 +229,5 @@ const styles = StyleSheet.create({
     alignSelf: "flex-end",
     marginBottom: 30,
     marginRight: 10,
-  },
-  input: {
-    fontWeight: "bold",
-    fontSize: 15,
-    color: "rebeccapurple",
-    borderBottomWidth: 2,
-    borderBlockColor: "rebeccapurple",
-    marginTop: 50,
-    marginBottom: 50,
-    paddingBottom: 10,
-    alignSelf: "center",
-    textAlign: "center",
-    width: 50,
-  },
-  info: {
-    fontSize: 15,
-    color: "dimgray",
-    alignSelf: "center",
-  },
-  image: {
-    width: 100,
-    height: 100,
-    marginBottom: 10,
-    alignSelf: "center",
   },
 });
