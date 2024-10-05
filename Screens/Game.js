@@ -113,7 +113,6 @@ export default function Game({ gameVisible, lastDigit, handleRestart }) {
 
   function handleGameOver() {
     setIsGameOver(true);
-    setReason("");
   }
 
   function handleNewGame() {
@@ -129,6 +128,7 @@ export default function Game({ gameVisible, lastDigit, handleRestart }) {
     setAnswer(generateNewAnswer());
     setReason("");
     setIsGameOver(false);
+    setGameStarted(false);
   }
 
   function submitCard() {
@@ -156,6 +156,8 @@ export default function Game({ gameVisible, lastDigit, handleRestart }) {
         useHint={useHint}
         submitGuess={submitGuess}
         secondsLeft={secondsLeft}
+        isGameStarted={gameStarted}
+        startGame={startGame}
       />
     );
   }

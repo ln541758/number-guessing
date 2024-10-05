@@ -3,7 +3,7 @@ import { Text, Button, TextInput, StyleSheet } from "react-native";
 import { Card } from "./Card";
 import { CustomButton } from "../Components/CustomButton";
 import { InputLayout } from "./InputLayout";
-import  Colors  from "./Colors";
+import Colors from "./Colors";
 import TextSize from "../Components/TextSize";
 
 export function GuessCard({
@@ -16,6 +16,8 @@ export function GuessCard({
   useHint,
   submitGuess,
   secondsLeft,
+  isGameStarted,
+  startGame,
 }) {
   return (
     <Card
@@ -24,30 +26,44 @@ export function GuessCard({
       <Text style={styles.text}>
         Guess a number between 1 & 100 that is multiple of {lastDigit}
       </Text>
-      <InputLayout
-        style={{
-          marginTop: 50,
-          marginBottom: 50,
-          alignSelf: "center",
-          width: 50,
-        }}
-        value={inputValue}
-        onChangeText={setInputValue}
-      />
-      {isHintUsed && <Text style={styles.hint}>{hint}</Text>}
-      <Text style={styles.info}>Attempts left: {guessNumber}</Text>
-      <Text style={styles.info}>Timer: {secondsLeft}s</Text>
-      <CustomButton
-        style={{ justifyContent: "space-between", alignItems: "center", marginTop: 50 }}
-      >
-        <Button
-          title="Use a Hint"
-          onPress={useHint}
-          disabled={isHintUsed}
-          color={Colors.blue}
-        />
-        <Button title="Submit guess" onPress={submitGuess} color={Colors.blue} />
-      </CustomButton>
+      {!isGameStarted ? (
+        <Button title="Start" onPress={startGame} color={Colors.blue}/>
+      ) : (
+        <>
+          <InputLayout
+            style={{
+              marginTop: 50,
+              marginBottom: 50,
+              alignSelf: "center",
+              width: 50,
+            }}
+            value={inputValue}
+            onChangeText={setInputValue}
+          />
+          {isHintUsed && <Text style={styles.hint}>{hint}</Text>}
+          <Text style={styles.info}>Attempts left: {guessNumber}</Text>
+          <Text style={styles.info}>Timer: {secondsLeft}s</Text>
+          <CustomButton
+            style={{
+              justifyContent: "space-between",
+              alignItems: "center",
+              marginTop: 50,
+            }}
+          >
+            <Button
+              title="Use a Hint"
+              onPress={useHint}
+              disabled={isHintUsed}
+              color={Colors.blue}
+            />
+            <Button
+              title="Submit guess"
+              onPress={submitGuess}
+              color={Colors.blue}
+            />
+          </CustomButton>
+        </>
+      )}
     </Card>
   );
 }
